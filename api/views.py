@@ -1,5 +1,6 @@
 # Default Django Modules
 from django.http import Http404
+from django.contrib.auth.models import User
 
 # Rest Framework Modules
 from rest_framework import status
@@ -8,9 +9,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import mixins
 from rest_framework import generics
+from rest_framework import permissions
 
 # App files
-from .serializers import ArticleSerializer
+from .serializers import ArticleSerializer, UserSerializer
 from .models import Article
 
 
@@ -111,8 +113,20 @@ class ArticleListMixin(mixins.ListModelMixin,
 class ArticleGenericView(generics.ListCreateAPIView):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
 class ArticleDetailGenericView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+
+class UserListView(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserDetailView(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 from .models import Article
 
@@ -23,3 +24,11 @@ class ArticleSerializer(serializers.ModelSerializer):
         obj.updatedAt = timezone.now()
         obj.save()
         return obj
+
+
+class UserSerializer(serializers.ModelSerializer):
+    articles = serializers.PrimaryKeyRelatedField(many=True, queryset=Article.objects.all())
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'articles']
