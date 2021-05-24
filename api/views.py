@@ -1,11 +1,13 @@
 # Default Django Modules
+from django.http import Http404
 
 # Rest Framework Modules
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.http import Http404
+from rest_framework import mixins
+from rest_framework import generics
 
 # App files
 from .serializers import ArticleSerializer
@@ -28,20 +30,6 @@ def list_article(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ArticleView(APIView):
-
-    def get(self, request, format=None):
-        article = Article.objects.all()
-        serializer = ArticleSerializer(article, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def post(self, request, format=None):
-        serializer = ArticleSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
 @api_view(["DELETE", "PUT", "GET"])
 def update_article(request, pk):
     try:
@@ -61,6 +49,21 @@ def update_article(request, pk):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# Using Class-Base-Views
+class ArticleView(APIView):
+
+    def get(self, request, format=None):
+        article = Article.objects.all()
+        serializer = ArticleSerializer(article, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, format=None):
+        serializer = ArticleSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class ArticleDetailView(APIView):
@@ -87,3 +90,29 @@ class ArticleDetailView(APIView):
         article = self.get_object(pk)
         article.delete()
         return Response({"msg": "Article Deleted!"}, status=status.HTTP_204_NO_CONTENT)
+
+
+# Using Mixins
+class ArticleListMixin(mixins.ListModelMixin,
+                       mixins.CreateModelMixin,
+                       mixins.UpdateModelMixin):
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
+
+    def get(self, request, *args, **kwargs):
+        self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.create(request, *args, **kwargs)
+
+
+# Using Generics
+
+class ArticleGenericView(generics.ListCreateAPIView):
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
+
+
+class ArticleDetailGenericView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
