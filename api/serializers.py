@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 
 from .models import Article
+from rest_framework.authtoken.views import Token
 
 
 class ArticleSerializer(serializers.ModelSerializer):
@@ -27,8 +28,18 @@ class ArticleSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    articles = serializers.PrimaryKeyRelatedField(many=True, queryset=Article.objects.all())
+    # articles = serializers.PrimaryKeyRelatedField(many=True, queryset=Article.objects.all())
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'articles']
+        fields = ['id', 'username', 'password']
+
+        extra_kwargs = {'password': {
+            'write_only': True,
+            'required': True
+        }}
+
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        Token.objects.create(user=user)
+        return user

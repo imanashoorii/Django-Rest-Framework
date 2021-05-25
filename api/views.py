@@ -23,6 +23,7 @@ from .models import Article
 
 # Create your views here.
 
+'''
 @api_view(['GET', 'POST'])
 def list_article(request):
     if request.method == "GET":
@@ -135,11 +136,13 @@ class UserListView(generics.ListAPIView):
 class UserDetailView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    
+'''
 
 
 class ArticleViewSet(viewsets.ViewSet):
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = [IsAuthenticated]
 
     def list(self, request):
         article = Article.objects.all()
@@ -174,3 +177,8 @@ class ArticleViewSet(viewsets.ViewSet):
             raise Http404
         article.delete()
         return Response({'msg': 'Article Deleted!'}, status=status.HTTP_204_NO_CONTENT)
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer

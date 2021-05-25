@@ -3,19 +3,22 @@ from django.urls import path
 # from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework.routers import DefaultRouter
 
-from .views import (list_article,
-                    update_article,
-                    ArticleView,
-                    ArticleDetailView,
-                    ArticleGenericView,
-                    ArticleDetailGenericView,
-                    UserListView,
-                    UserDetailView,
-                    ArticleViewSet
+from .views import (
+                    # list_article,
+                    # update_article,
+                    # ArticleView,
+                    # ArticleDetailView,
+                    # ArticleGenericView,
+                    # ArticleDetailGenericView,
+                    # UserListView,
+                    # UserDetailView,
+                    ArticleViewSet,
+                    UserViewSet
                     )
 
 router = DefaultRouter()
-router.register('article', ArticleViewSet, basename='article')
+router.register('article', ArticleViewSet, basename='Articles')
+router.register('users', UserViewSet, basename='Users')
 
 urlpatterns = [
     # path('article/', list_article),
