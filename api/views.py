@@ -5,13 +5,16 @@ from django.shortcuts import get_object_or_404
 
 # Rest Framework Modules
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import mixins
 from rest_framework import generics
 from rest_framework import permissions
 from rest_framework import viewsets
+
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 # App files
 from .serializers import ArticleSerializer, UserSerializer
@@ -135,6 +138,9 @@ class UserDetailView(generics.RetrieveAPIView):
 
 
 class ArticleViewSet(viewsets.ViewSet):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+
     def list(self, request):
         article = Article.objects.all()
         serializer = ArticleSerializer(article, many=True)
