@@ -16,6 +16,8 @@ from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 # App files
 from .serializers import ArticleSerializer, UserSerializer
 from .models import Article
@@ -182,3 +184,5 @@ class ArticleViewSet(viewsets.ViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    authentication_classes = (JWTAuthentication,)
+    permission_classes = [IsAuthenticated]
