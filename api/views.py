@@ -143,7 +143,7 @@ class UserDetailView(generics.RetrieveAPIView):
 
 
 class ArticleViewSet(viewsets.ViewSet):
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (JWTAuthentication,)
     permission_classes = [IsAuthenticated]
 
     def list(self, request):
